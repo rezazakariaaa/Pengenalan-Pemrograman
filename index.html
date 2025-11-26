@@ -704,6 +704,169 @@
             align-items: center;
             height: 200px;
         }
+        
+        /* COMMENT SECTION STYLES */
+.comment-section {
+    margin-top: 4rem;
+    padding-top: 3rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.comment-section h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.comment-form {
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--border-radius);
+    color: var(--text-light);
+    font-family: inherit;
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--accent-electric);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+textarea.form-input {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.comment-list {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+}
+
+.comment-item {
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: var(--transition);
+}
+
+.comment-item:hover {
+    background: var(--card-hover);
+}
+
+.comment-item:last-child {
+    border-bottom: none;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.comment-author {
+    font-weight: 600;
+    color: var(--accent-cyan);
+}
+
+.comment-date {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.comment-content {
+    color: var(--text-light);
+    line-height: 1.6;
+}
+
+.no-comments {
+    padding: 3rem;
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.comment-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: var(--transition);
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.action-btn:hover {
+    color: var(--accent-electric);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.char-count {
+    text-align: right;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+.char-count.warning {
+    color: #ff6b6b;
+}
+
+.comment-stats {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--text-muted);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .comment-form {
+        padding: 1.5rem;
+    }
+    
+    .comment-item {
+        padding: 1rem;
+    }
+    
+    .comment-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .comment-actions {
+        flex-wrap: wrap;
+    }
+}
     </style>
 </head>
 <body>
@@ -1468,6 +1631,40 @@
                     <h2 class="hidden">Game Interaktif: Konsep Dasar Pemrograman</h2>
                     <p class="game-description hidden">Uji pemahaman Anda tentang konsep dasar pemrograman dengan game interaktif yang menyenangkan. Cocok untuk pemula yang ingin belajar sambil bermain.</p>
                     <a href="https://wordwall.net/resource/101966262/bahasa-indonesia/pengertian-dan-konsep-dasar-pemrograman" class="btn hidden" target="_blank">Buka Game <span style="margin-left: 5px;">↗</span></a>
+                    
+                    <!-- COMMENT SECTION -->
+<div class="comment-section">
+    <h2>Diskusi & Komentar</h2>
+    
+    <!-- Comment Stats -->
+    <div class="comment-stats" id="commentStats">
+        <!-- Jumlah komentar akan ditampilkan di sini -->
+    </div>
+    
+    <!-- Comment Form -->
+    <div class="comment-form">
+        <h3 style="margin-bottom: 1.5rem; color: var(--accent-electric);">Tambah Komentar</h3>
+        <form id="commentForm">
+            <div class="form-group">
+                <label for="commentName">Nama</label>
+                <input type="text" id="commentName" class="form-input" placeholder="Masukkan nama Anda" required maxlength="50">
+            </div>
+            <div class="form-group">
+                <label for="commentText">Komentar</label>
+                <textarea id="commentText" class="form-input" placeholder="Tulis komentar Anda di sini..." required maxlength="500"></textarea>
+                <div class="char-count" id="charCount">0/500 karakter</div>
+            </div>
+            <button type="submit" class="btn">
+                <span>💬</span> Kirim Komentar
+            </button>
+        </form>
+    </div>
+
+    <!-- Comments List -->
+    <div class="comment-list" id="commentList">
+        <!-- Comments will be loaded here -->
+    </div>
+</div>
                 </div>
             </div>
         </section>
@@ -1495,6 +1692,247 @@
     </footer>
 
     <script>
+      // Comment System with LocalStorage
+class CommentSystem {
+    constructor() {
+        this.comments = this.loadComments();
+        this.init();
+    }
+
+    init() {
+        this.renderComments();
+        this.setupEventListeners();
+        this.updateStats();
+    }
+
+    loadComments() {
+        const saved = localStorage.getItem('website-comments');
+        if (saved) {
+            return JSON.parse(saved);
+        } else {
+            // Sample comments for demo
+            const sampleComments = [
+                {
+                    id: 1,
+                    name: "Ahmad",
+                    text: "Artikel yang sangat informatif! Saya baru menyadari betapa pentingnya pemrograman dalam kehidupan sehari-hari.",
+                    date: "25 November 2024, 10:30",
+                    likes: 5
+                },
+                {
+                    id: 2,
+                    name: "Sari",
+                    text: "Terima kasih untuk penjelasannya yang mudah dipahami. Sangat membantu untuk pemula seperti saya.",
+                    date: "24 November 2024, 15:45",
+                    likes: 3
+                }
+            ];
+            this.saveComments(sampleComments);
+            return sampleComments;
+        }
+    }
+
+    saveComments(comments = this.comments) {
+        localStorage.setItem('website-comments', JSON.stringify(comments));
+    }
+
+    setupEventListeners() {
+        // Comment form submission
+        document.getElementById('commentForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.addComment();
+        });
+
+        // Character count
+        document.getElementById('commentText').addEventListener('input', (e) => {
+            this.updateCharCount(e.target.value.length);
+        });
+
+        // Real-time name validation
+        document.getElementById('commentName').addEventListener('input', (e) => {
+            this.validateName(e.target.value);
+        });
+    }
+
+    updateCharCount(count) {
+        const charCount = document.getElementById('charCount');
+        charCount.textContent = `${count}/500 karakter`;
+        
+        if (count > 450) {
+            charCount.classList.add('warning');
+        } else {
+            charCount.classList.remove('warning');
+        }
+    }
+
+    validateName(name) {
+        const nameInput = document.getElementById('commentName');
+        if (name.length > 50) {
+            nameInput.style.borderColor = '#ff6b6b';
+        } else {
+            nameInput.style.borderColor = '';
+        }
+    }
+
+    addComment() {
+        const nameInput = document.getElementById('commentName');
+        const textInput = document.getElementById('commentText');
+        
+        const name = nameInput.value.trim();
+        const text = textInput.value.trim();
+
+        if (!name || !text) {
+            this.showMessage('Harap isi nama dan komentar!', 'error');
+            return;
+        }
+
+        if (name.length > 50) {
+            this.showMessage('Nama terlalu panjang! Maksimal 50 karakter.', 'error');
+            return;
+        }
+
+        if (text.length > 500) {
+            this.showMessage('Komentar terlalu panjang! Maksimal 500 karakter.', 'error');
+            return;
+        }
+
+        const newComment = {
+            id: Date.now(),
+            name: name,
+            text: text,
+            date: new Date().toLocaleDateString('id-ID', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            }),
+            likes: 0
+        };
+
+        this.comments.unshift(newComment); // Add to beginning
+        this.saveComments();
+        this.renderComments();
+        this.updateStats();
+
+        // Reset form
+        nameInput.value = '';
+        textInput.value = '';
+        this.updateCharCount(0);
+
+        // Show success message
+        this.showMessage('Komentar berhasil ditambahkan!', 'success');
+    }
+
+    showMessage(message, type) {
+        // Remove existing message
+        const existingMessage = document.querySelector('.comment-message');
+        if (existingMessage) {
+            existingMessage.remove();
+        }
+
+        const messageEl = document.createElement('div');
+        messageEl.className = `comment-message ${type}`;
+        messageEl.textContent = message;
+        messageEl.style.cssText = `
+            padding: 12px 16px;
+            margin: 1rem 0;
+            border-radius: var(--border-radius);
+            text-align: center;
+            font-weight: 500;
+            background: ${type === 'success' ? 'rgba(76, 175, 80, 0.2)' : 'rgba(244, 67, 54, 0.2)'};
+            color: ${type === 'success' ? '#4caf50' : '#f44336'};
+            border: 1px solid ${type === 'success' ? 'rgba(76, 175, 80, 0.3)' : 'rgba(244, 67, 54, 0.3)'};
+        `;
+
+        document.querySelector('.comment-form').prepend(messageEl);
+
+        // Auto remove after 3 seconds
+        setTimeout(() => {
+            messageEl.remove();
+        }, 3000);
+    }
+
+    deleteComment(id) {
+        if (confirm('Apakah Anda yakin ingin menghapus komentar ini?')) {
+            this.comments = this.comments.filter(comment => comment.id !== id);
+            this.saveComments();
+            this.renderComments();
+            this.updateStats();
+            this.showMessage('Komentar berhasil dihapus!', 'success');
+        }
+    }
+
+    likeComment(id) {
+        const comment = this.comments.find(c => c.id === id);
+        if (comment) {
+            comment.likes = (comment.likes || 0) + 1;
+            this.saveComments();
+            this.renderComments();
+            
+            // Show like animation
+            const likeBtn = document.querySelector(`[data-comment-id="${id}"] .like-btn`);
+            likeBtn.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                likeBtn.style.transform = 'scale(1)';
+            }, 200);
+        }
+    }
+
+    updateStats() {
+        const statsEl = document.getElementById('commentStats');
+        const count = this.comments.length;
+        statsEl.innerHTML = `${count} Komentar${count !== 1 ? '' : ''}`;
+    }
+
+    renderComments() {
+        const container = document.getElementById('commentList');
+        
+        if (this.comments.length === 0) {
+            container.innerHTML = `
+                <div class="no-comments">
+                    <p>Belum ada komentar. Jadilah yang pertama berkomentar!</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = this.comments.map(comment => `
+            <div class="comment-item" data-comment-id="${comment.id}">
+                <div class="comment-header">
+                    <div class="comment-author">${this.escapeHtml(comment.name)}</div>
+                    <div class="comment-date">${comment.date}</div>
+                </div>
+                <div class="comment-content">${this.escapeHtml(comment.text)}</div>
+                <div class="comment-actions">
+                    <button class="action-btn like-btn" onclick="commentSystem.likeComment(${comment.id})">
+                        👍 Suka (${comment.likes || 0})
+                    </button>
+                    <button class="action-btn delete-btn" onclick="commentSystem.deleteComment(${comment.id})">
+                        🗑️ Hapus
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+}
+
+// Initialize comment system when page loads
+let commentSystem;
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize comment system
+    commentSystem = new CommentSystem();
+
+    // ... (kode lainnya yang sudah ada) ...
+});
+      
         // NAVBAR TOGGLE
         document.addEventListener('DOMContentLoaded', function() {
             const hamburger = document.getElementById('hamburger');
